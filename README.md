@@ -2,45 +2,45 @@
 
 Документация на [русском](./README.RU.md)
 
-Плагин Webpack, позволяющий изменять стратегию получения функцией [Hot Module Replacement](https://webpack.js.org/guides/hot-module-replacement/) обновленных модулей при включенной настройке `hot: true`.
+Webpack plugin that allows you to change the strategy for [Hot Module Replacement](https://webpack.js.org/guides/hot-module-replacement/) to receive updated modules when `hot: true` is enabled.
 
-## Подключение плагина
+## Installation
 
-В файле конфигурации [webpack.config.js](./webpack.config.js):
+In Webpack config file [webpack.config.js](./webpack.config.js):
 
 ```js
 const CustomHotUpdateStrategy = require('webpack-custom-hot-update-strategy');
 
 module.exports = {
-    // ... Другие настройки Webpack
+    // ... Other Webpack config
 
     devServer: {
-        // ... Другие настройки Webpack Dev Server
+        // ... Other Webpack Dev Server config
 
         hot: true
     },
     plugins: [
-        // ... Другие плагины Webpack
+        // ... Other Webpack plugins
 
         new CustomHotUpdateStrategy()
     ]
 };
 ```
 
-## Настройка плагина
+## Configuration
 
-Плагин может принимать в качестве аргумента объект с ключами `update` и `manifest`:
+A plugin can take an object with keys `update` and `manifest` as an argument:
 
 ```js
 new CustomHotUpdateStrategy({
-    manifest: require('./путь_к_реализации'),
-    update: require('./путь_к_реализации')
+    manifest: require('./path_to_implementation'),
+    update: require('./path_to_implementation')
 });
 ```
 
-Плагин содержит несколько вариантов реализации этих функций:
+This plugin contains several options for implementing these functions:
 
--   `manifest`: require _шаблона_ функции, которая загружает манифест обновления модуля `[publicPath][hash].hot-update.json`.
+-   `manifest`: require a function _template_ that loads the module update manifest `[publicPath][hash].hot-update.json`.
 
     -   [hotDownloadManifest](./strategies/manifest/hotDownloadManifest.js):
 
@@ -48,9 +48,9 @@ new CustomHotUpdateStrategy({
         require('webpack-custom-hot-update-strategy/strategies/manifest/hotDownloadManifest');
         ```
 
-        **_Применяется по умолчанию_**, если не задан ключ `manifest`. Эта функция соответствует родной функции `Hot Module Replacement`.
+        **_Applies by default_**, if no key is specified `manifest`. This function corresponds to the native function `Hot Module Replacement`.
 
--   `update`: require _шаблона_ функции, которая принимает `chunkId`, на его основе составляет путь к файлу (`[publicPath][chunkId].[hash].hot-update.js`) с обновленным модулем и добавляет скрипт модуля на страницу.
+-   `update`: require a function _template_ which takes an argument `chunkId`, на его основе specifies the path to the file (`[publicPath][chunkId].[hash].hot-update.js`) and adds the module script to the page.
 
     -   [hotDownloadUpdateChunk](./strategies/update/hotDownloadUpdateChunk.js):
 
@@ -58,7 +58,7 @@ new CustomHotUpdateStrategy({
         require('webpack-custom-hot-update-strategy/strategies/update/hotDownloadUpdateChunk');
         ```
 
-        **_Применяется по умолчанию_**, если не задан ключ `update`. Эта функция соответствует родной функции `Hot Module Replacement`: составляет путь до обновившегося модуля, создает новый тег `<script>`, указывает путь в качестве `src`и добавляет тег в `head` страницы.
+        **_Applies by default_**, if no key is specified `update`. This function corresponds to the native function `Hot Module Replacement`: specifies the path to the updated module, creates a new tag `<script>`, assigns the path as `src` and append this tag in `head`.
 
     -   [hotDownloadUpdateChunkFetch](./strategies/update/hotDownloadUpdateChunkFetch.js):
 
@@ -66,7 +66,7 @@ new CustomHotUpdateStrategy({
         require('webpack-custom-hot-update-strategy/strategies/update/hotDownloadUpdateChunkFetch');
         ```
 
-        Составляет путь до обновившегося модуля, делает запрос на него с помощью `fetch`, создает новый тег `<script>`, вставляет в него контент, полученный из запроса и добавляет тег в `head` страницы.
+        Specifies the path to the updated module, makes a request for it using `fetch`, creates a new tag `<script>`, inserts the content received from the query and append this tag in `head`.
 
     -   [hotDownloadUpdateChunkFetchEval](./strategies/update/hotDownloadUpdateChunkFetchEval.js):
 
@@ -74,30 +74,30 @@ new CustomHotUpdateStrategy({
         require('webpack-custom-hot-update-strategy/strategies/update/hotDownloadUpdateChunkFetchEval');
         ```
 
-        Составляет путь до обновившегося модуля, делает запрос на него с помощью `fetch`, и выполняет контент, полученный из запроса через функцию `eval()`.
+        Specifies the path to the updated module, makes a request for it using `fetch`, and executes the content, retrieved from the query with `eval()`.
 
-## Написание собственной реализации
+## Your own implementation
 
-Чтобы написать собственную реализацию этих функций, необходимо придерживаться некоторых правил, по которым шаблон будет преобразован в рабочую функцию, которая попадет в обертку модуля.
+To write your own implementation of these functions, you need to follow some rules by which the template will be converted into a working function that will fall into the module wrapper.
 
--   Обертка функции:
+-   Function wrapper:
 
-    Модуль должен оборачивать рабочие функции в анонимную, которую возвращает
+    The module should wrap the working functions in an anonymous one, which it returns.
 
     ```js
     module.exports = function() {
-        // Реализация рабочей функции
+        // Implementation of the working function
     };
     ```
 
--   Имена главных функций и их аргументов должны быть строго определенными.
+-   The names of the main functions and their arguments must be strictly defined.
 
     -   `manifest`:
 
         ```js
         module.exports = function() {
             function hotDownloadManifest(requestTimeout) {
-                // Реализация рабочей функции
+                // Implementation of the working function
             }
         };
         ```
@@ -106,14 +106,14 @@ new CustomHotUpdateStrategy({
         ```js
         module.exports = function() {
             function hotDownloadUpdateChunk(chunkId) {
-                // Реализация рабочей функции
+                // Implementation of the working function
             }
         };
         ```
 
--   Так как многие значения, используемые в этих функциях, являются настраиваемыми, в шаблоне необходимо заменять их на специальные `$выражения$`, которые будут заменены на нужные значения уже на этапе компиляции.
+-   Since many of the values used in these functions are custom, you must replace them with special `$expressions$` in the template, which will be replaced with the desired values at compile time.
 
-Список специальных выражений:
+List of special expressions:
 
 -   `$require$` -> [`__webpack_require__`](https://webpack.js.org/api/module-variables/#__webpack_require__-webpack-specific)
 
@@ -123,9 +123,9 @@ new CustomHotUpdateStrategy({
 
 -   `$hotChunkFilename$` -> [`output.hotUpdateChunkFilename`](https://webpack.js.org/configuration/output/#outputhotupdatechunkfilename)
 
--   `$hash$` -> Текущий hash модуля
+-   `$hash$` -> Current module hash
 
-С учетом всего вышесказанного, шаблон стандартной функции для `update` будет выглядеть следующим образом:
+With all of the above in mind, the standard function template for `update` prop will look like this:
 
 ```js
 module.exports = function() {
