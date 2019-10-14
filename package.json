@@ -2,6 +2,11 @@
     "name": "webpack-custom-hot-update-strategy",
     "version": "1.0.0",
     "description": "Webpack plugin for customize HMR functions that request and add code of changed modules to the page",
+    "homepage": "https://github.com/neyasbltb88/webpack-custom-hot-update-strategy",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/neyasbltb88/webpack-custom-hot-update-strategy.git"
+    },
     "keywords": [
         "webpack",
         "webpack-plugin",
@@ -21,7 +26,10 @@
         "build": "cross-env NODE_ENV=production webpack",
         "debug": "cross-env NODE_ENV=development DEBUG=true node --inspect-brk ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --verbose"
     },
-    "author": "Denis Mashkov <neyasbltb_88@mail.ru>",
+    "author": {
+        "name": "Denis Mashkov",
+        "email": "neyasbltb_88@mail.ru"
+    },
     "license": "MIT",
     "devDependencies": {
         "cross-env": "^6.0.3",

@@ -6,6 +6,8 @@ Webpack plugin that allows you to change the strategy for [Hot Module Replacemen
 
 ## Installation
 
+`npm install --save-dev webpack-custom-hot-update-strategy`
+
 In Webpack config file [webpack.config.js](./webpack.config.js):
 
 ```js

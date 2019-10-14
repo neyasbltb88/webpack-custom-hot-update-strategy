@@ -4,6 +4,8 @@
 
 ## Подключение плагина
 
+`npm install --save-dev webpack-custom-hot-update-strategy`
+
 В файле конфигурации [webpack.config.js](./webpack.config.js):
 
 ```js
